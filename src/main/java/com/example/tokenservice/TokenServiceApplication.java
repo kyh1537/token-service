@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-public class VideoLabApplication {
+public class TokenServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(VideoLabApplication.class, args);
+        SpringApplication.run(TokenServiceApplication.class, args);
     }
 }

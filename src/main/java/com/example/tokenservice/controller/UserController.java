@@ -50,25 +50,25 @@ public class UserController {
         return new ResponseEntity<>(this.userService.login(req), HttpStatus.CREATED);
     }
 
-    @PutMapping("/v1/{id}")
-    public ResponseEntity<Void> updateUser(
-            @PathVariable String id,
-            @Valid @RequestBody UserDto.UserCreateDto req,
-            BindingResult result) {
-
-        if (result.hasErrors()) {
-            throw new BindingException(result.getFieldError());
-        }
-
-        this.userService.updateUser(id, req);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @DeleteMapping("/v1/{id}")
-    public ResponseEntity<Void> withdrawUser(
-            @PathVariable String id) {
-
-        this.userService.withdrawUser(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+    // @PutMapping("/v1/{id}")
+    // public ResponseEntity<Void> updateUser(
+    //         @PathVariable String id,
+    //         @Valid @RequestBody UserDto.UserCreateDto req,
+    //         BindingResult result) {
+    //
+    //     if (result.hasErrors()) {
+    //         throw new BindingException(result.getFieldError());
+    //     }
+    //
+    //     this.userService.updateUser(id, req);
+    //     return new ResponseEntity<>(HttpStatus.OK);
+    // }
+    //
+    // @DeleteMapping("/v1/{id}")
+    // public ResponseEntity<Void> withdrawUser(
+    //         @PathVariable String id) {
+    //
+    //     this.userService.withdrawUser(id);
+    //     return new ResponseEntity<>(HttpStatus.OK);
+    // }
 }
