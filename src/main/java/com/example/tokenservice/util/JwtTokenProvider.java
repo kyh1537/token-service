@@ -52,11 +52,6 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // // header 토큰을 가져오는 기능
-    // public String getHeaderToken(HttpServletRequest request, String type) {
-    //     return type.equals("Access") ? request.getHeader(ACCESS_TOKEN) : request.getHeader(REFRESH_TOKEN);
-    // }
-
     // 토큰 생성
     public TokenInfoDto createAllToken(String uid, List<String> roles) {
         return TokenInfoDto.builder()

@@ -1,9 +1,12 @@
 package com.example.tokenservice.controller.dto;
 
+import java.time.LocalDateTime;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import com.example.tokenservice.model.User;
+import com.example.tokenservice.model.User.Status;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -40,7 +43,7 @@ public class UserDto {
 
     @Builder
     @Getter
-    public static class UserInfoRes {
+    public static class CreateUserRes {
         private String id;
     }
 
@@ -48,5 +51,31 @@ public class UserDto {
     @Getter
     public static class LoginRes {
         private TokenInfoDto token;
+    }
+
+    @Builder
+    @Getter
+    public static class UserInfoRes {
+        private String id;
+        private String email;
+        private String name;
+        private String cellphone;
+        private Status status;
+        private LocalDateTime createDate;
+        private LocalDateTime updateDate;
+        private LocalDateTime withdrawDate;
+
+        public static UserInfoRes of(User user) {
+            return UserInfoRes.builder()
+                    .id(user.getId())
+                    .email(user.getEmail())
+                    .name(user.getName())
+                    .cellphone(user.getCellphone())
+                    .status(user.getStatus())
+                    .createDate(user.getCreateDate())
+                    .updateDate(user.getUpdateDate())
+                    .withdrawDate(user.getWithdrawDate())
+                    .build();
+        }
     }
 }

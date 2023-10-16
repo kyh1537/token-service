@@ -28,7 +28,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter(value = AccessLevel.PACKAGE)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class CommonEntityByAuditing implements Persistable<String> {
+public abstract class CommonEntityByAuditing {
 
     @CreatedDate
     @Column(name = "create_date", updatable = false, nullable = false)
@@ -51,13 +51,5 @@ public abstract class CommonEntityByAuditing implements Persistable<String> {
     protected void updateUser(String userId) {
         this.updateUser = userId;
         this.updateDate = LocalDateTime.now();
-    }
-
-    @Transient
-    protected boolean isNew = false;
-
-    @Override
-    public boolean isNew() {
-        return isNew;
     }
 }

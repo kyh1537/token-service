@@ -13,7 +13,7 @@ import com.example.tokenservice.controller.dto.TokenInfoDto;
 import com.example.tokenservice.controller.dto.UserDto.LoginDto;
 import com.example.tokenservice.controller.dto.UserDto.LoginRes;
 import com.example.tokenservice.controller.dto.UserDto.UserCreateDto;
-import com.example.tokenservice.controller.dto.UserDto.UserInfoRes;
+import com.example.tokenservice.controller.dto.UserDto.CreateUserRes;
 import com.example.tokenservice.exception.CommonException;
 import com.example.tokenservice.util.JwtTokenProvider;
 import com.example.tokenservice.model.AccessTokens;
@@ -36,7 +36,7 @@ public class UserService {
      * 유저 회원 가입 API 로직
      */
     @Transactional
-    public UserInfoRes createUser(UserCreateDto req) {
+    public CreateUserRes createUser(UserCreateDto req) {
 
         this.validationPw(req.getPassword(), req.getCheckPassword());
         this.validationMail(req.getEmail());
@@ -52,12 +52,11 @@ public class UserService {
                 .status(Status.ACTIVE)
                 .createUser(uid)
                 .updateUser(uid)
-                .isNew(true)
                 .build();
 
         // 유저 정보 저장
         this.userPersist.save(user);
-        return UserInfoRes.builder().id(uid).build();
+        return CreateUserRes.builder().id(uid).build();
     }
 
     // /**

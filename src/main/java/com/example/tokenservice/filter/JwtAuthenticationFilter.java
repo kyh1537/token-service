@@ -11,6 +11,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.tokenservice.dto.UserDetailsImpl;
+import com.example.tokenservice.model.User;
 import com.example.tokenservice.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (!ObjectUtils.isEmpty(accessToken) && this.jwtTokenProvider.validateToken(accessToken)) {
             setAuthentication(this.jwtTokenProvider.getUidFromToken(accessToken));
+            request.setAttribute("tokenInfo", getAuthentication());
         }
 
         filterChain.doFilter(request, response);
@@ -44,5 +47,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public void setAuthentication(String uid) {
         Authentication authentication = this.jwtTokenProvider.createAuthentication(uid);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public User getAuthentication() {
+        UserDetailsImpl userDetail = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetail.getUser();
     }
 }
