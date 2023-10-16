@@ -1,7 +1,6 @@
 package com.example.tokenservice.util;
 
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -10,12 +9,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
-import com.example.tokenservice.constant.Errors;
 import com.example.tokenservice.controller.dto.TokenInfoDto;
-import com.example.tokenservice.exception.CommonException;
-import com.example.tokenservice.model.AccessTokens;
 import com.example.tokenservice.persist.AccessTokensPersist;
 import com.example.tokenservice.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
@@ -37,8 +32,6 @@ public class JwtTokenProvider {
     // 토큰 유효시간 30분
     private final long ACCESS_TIME = 30 * 60 * 1000L;
     private final long REFRESH_TIME = 2 * 60 * 1000L;
-    public final String ACCESS_TOKEN = "Access";
-    public final String REFRESH_TOKEN = "Refresh";
 
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -77,28 +70,19 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // // 토큰 검증
-    // public Boolean tokenValidation(String token) {
-    //     try {
-    //         return !ObjectUtils.isEmpty(this.verifyToken(token));
-    //     } catch (Exception ex) {
-    //         return false;
-    //     }
-    // }
-
     // refreshToken 토큰 검증
     // db에 저장되어 있는 token과 비교
     // db에 저장한다는 것이 jwt token을 사용한다는 강점을 상쇄시킨다.
-    public Boolean refreshTokenValidation(String token) {
-        // DB에 저장한 토큰 비교
-        AccessTokens refreshToken = this.tokensPersist.findByRefreshToken(token);
-        if (ObjectUtils.isEmpty(refreshToken)) {
-            throw new CommonException(Errors.AUTH_TOKEN_NOT_FOUND_ERR);
-        } else if (refreshToken.getRefreshExpireDate().isBefore(LocalDateTime.now())) {
-            throw new CommonException(Errors.AUTH_TOKEN_EXPIRE_ERR);
-        }
-        return true;
-    }
+    // public Boolean refreshTokenValidation(String token) {
+    //     // DB에 저장한 토큰 비교
+    //     AccessTokens refreshToken = this.tokensPersist.findByRefreshToken(token);
+    //     if (ObjectUtils.isEmpty(refreshToken)) {
+    //         throw new CommonException(Errors.AUTH_TOKEN_NOT_FOUND_ERR);
+    //     } else if (refreshToken.getRefreshExpireDate().isBefore(LocalDateTime.now())) {
+    //         throw new CommonException(Errors.AUTH_TOKEN_EXPIRE_ERR);
+    //     }
+    //     return true;
+    // }
 
     // 인증 객체 생성
     public Authentication createAuthentication(String uid) {
@@ -111,16 +95,6 @@ public class JwtTokenProvider {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 
-    // public Claims verifyToken(String token) {
-    //     try {
-    //         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-    //     } catch (ExpiredJwtException e) { // 토큰만료
-    //         throw new CommonException(Errors.AUTH_TOKEN_EXPIRE_ERR);
-    //     } catch (Exception e) { // 그외 오류
-    //         throw new CommonException(Errors.AUTH_TOKEN_NOT_FOUND_ERR);
-    //     }
-    // }
-
     // // 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String jwtToken) {
         try {
@@ -130,5 +104,4 @@ public class JwtTokenProvider {
             return false;
         }
     }
-
 }

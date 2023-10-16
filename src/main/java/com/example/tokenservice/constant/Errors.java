@@ -5,7 +5,6 @@ import lombok.Getter;
 @Getter
 public enum Errors {
 
-    // general
     GENERAL_UNKNOWN(-10, "에러", "UNKNOWN ERROR"),
     AUTH_TOKEN_NOT_FOUND_ERR(-403, "에러", "인증 정보를 확인해주세요."),
     VALIDATION_USER_ID_ERR(-1000, "에러", "이미 사용 중인 아이디 입니다."),
