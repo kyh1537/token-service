@@ -46,22 +46,20 @@ public class JwtTokenProvider {
     }
 
     // 토큰 생성
-    public TokenInfoDto createAllToken(String uid, List<String> roles) {
+    public TokenInfoDto createAllToken(String uid) {
         return TokenInfoDto.builder()
-                .accessToken(createToken(uid, "Access", roles))
-                .refreshToken(createToken(uid, "Refresh", roles))
+                .accessToken(createToken(uid, ACCESS_TIME))
+                .refreshToken(createToken(uid,0L))
                 .build();
     }
 
     /**
      * 토큰정보 생성
      */
-    private String createToken(String uid, String type, List<String> roles) {
+    private String createToken(String uid, Long accessTime) {
         Claims claims = Jwts.claims().setSubject(uid);
-        claims.put("roles", roles);
 
         Date now = new Date();
-        long accessTime = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -95,7 +93,7 @@ public class JwtTokenProvider {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
 
-    // // 토큰의 유효성 + 만료일자 확인
+    // // 토큰의 유효성 검증
     public boolean validateToken(String jwtToken) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwtToken);

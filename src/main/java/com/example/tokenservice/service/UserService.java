@@ -94,7 +94,7 @@ public class UserService {
                 () -> new CommonException(Errors.USER_NOT_FOUND_ERR)
         );
 
-        // 비밀번호 검사
+        // 비밀번호 검증
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new CommonException(Errors.PASSWORD_NOT_MATCH_ERR);
         }
@@ -103,7 +103,7 @@ public class UserService {
         this.refreshTokenPersist.expireToken(user.getId());
 
         // Token 생성
-        TokenInfoDto tokenDto = this.jwtTokenProvider.createAllToken(user.getId(), null);
+        TokenInfoDto tokenDto = this.jwtTokenProvider.createAllToken(user.getId());
 
         // 신규 토큰 등록
         AccessTokens newToken = AccessTokens.builder()
