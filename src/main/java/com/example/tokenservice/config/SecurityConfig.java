@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeRequests()// 요청에 대한 사용권한 체크
                 .antMatchers("/user/v1").permitAll()
                 .antMatchers("/user/v1/login").permitAll()
+                .antMatchers("/user/v1/refresh").permitAll()
                 // .antMatchers("/admin/**").hasRole("ADMIN")
                 // .antMatchers("/video/**").hasRole("USER")
                 .anyRequest().authenticated()

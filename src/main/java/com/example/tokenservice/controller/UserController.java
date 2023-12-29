@@ -33,22 +33,34 @@ public class UserController {
             BindingResult result) {
 
         if (result.hasErrors()) {
-            throw new BindingException(result.getFieldError());
+            throw BindingException.of(result.getFieldError());
         }
 
-        return new ResponseEntity<>(this.userService.createUser(req), HttpStatus.CREATED);
+        return ResponseEntity.ok(this.userService.createUser(req));
     }
 
     @PostMapping("/v1/login")
     public ResponseEntity<LoginRes> login(
-            @Valid @RequestBody UserDto.LoginDto req,
+            @Valid @RequestBody UserDto.LoginReq req,
             BindingResult result) {
 
         if (result.hasErrors()) {
-            throw new BindingException(result.getFieldError());
+            throw BindingException.of(result.getFieldError());
         }
 
-        return new ResponseEntity<>(this.userService.login(req), HttpStatus.CREATED);
+        return ResponseEntity.ok(this.userService.login(req));
+    }
+
+    @PostMapping("/v1/refresh")
+    public ResponseEntity<LoginRes> refreshToken(
+        @Valid @RequestBody UserDto.RefreshReq req,
+        BindingResult result) {
+
+        if (result.hasErrors()) {
+            throw BindingException.of(result.getFieldError());
+        }
+
+        return ResponseEntity.ok(this.userService.refreshToken(req));
     }
 
     /**
@@ -57,6 +69,6 @@ public class UserController {
     @GetMapping("/v1/me")
     public ResponseEntity<UserInfoRes> getUserInfo(HttpServletRequest request) {
         User user = (User) request.getAttribute("tokenInfo");
-        return new ResponseEntity<>(UserInfoRes.of(user), HttpStatus.OK);
+        return ResponseEntity.ok(UserInfoRes.of(user));
     }
 }
