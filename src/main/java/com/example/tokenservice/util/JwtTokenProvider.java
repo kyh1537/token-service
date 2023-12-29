@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.example.tokenservice.controller.dto.TokenInfoDto;
+import com.example.tokenservice.model.User;
 import com.example.tokenservice.service.UserDetailsServiceImpl;
 
 import io.jsonwebtoken.Claims;
@@ -32,6 +33,7 @@ public class JwtTokenProvider {
 	// 토큰 유효 시간 30분
 	private final long ACCESS_TIME = 30 * 60 * 1000L;
 	private final long REFRESH_TIME = 0L;
+	// private final long REFRESH_TIME = 24 * 3600 * 1000L;
 
 	private final UserDetailsServiceImpl userDetailsService;
 
@@ -46,19 +48,19 @@ public class JwtTokenProvider {
 	/**
 	 * 로그인시 토큰 생성
 	 */
-	public TokenInfoDto createAllToken(String uid) {
+	public TokenInfoDto createAllToken(User user) {
 		return TokenInfoDto.builder()
-			.accessToken(createToken(uid, ACCESS_TIME))
-			.refreshToken(createToken(uid, REFRESH_TIME))
+			.accessToken(createToken(user, ACCESS_TIME, "access"))
+			.refreshToken(createToken(user, REFRESH_TIME, "refresh"))
 			.build();
 	}
 
 	/**
 	 * 리프레시 토큰을 이용한 접속 토큰 재생성
 	 */
-	public TokenInfoDto createRefreshToken(String uid, String refreshToken) {
+	public TokenInfoDto createRefreshToken(User user, String refreshToken) {
 		return TokenInfoDto.builder()
-			.accessToken(createToken(uid, REFRESH_TIME))
+			.accessToken(createToken(user, ACCESS_TIME, "access"))
 			.refreshToken(refreshToken)
 			.build();
 	}
@@ -66,11 +68,15 @@ public class JwtTokenProvider {
 	/**
 	 * 토큰정보 생성
 	 */
-	private String createToken(String uid, Long accessTime) {
-		Claims claims = Jwts.claims().setSubject(uid);
+	private String createToken(User user, Long accessTime, String type) {
+		Claims claims = Jwts.claims();
+		claims.put("uid", user.getId());
+		claims.put("email", user.getEmail());
+		claims.put("name", user.getName());
 
 		Date now = new Date();
 		return Jwts.builder()
+			.setHeaderParam("type", type)
 			.setClaims(claims)
 			.setIssuedAt(now)
 			.setExpiration(new Date(now.getTime() + accessTime))
@@ -78,21 +84,29 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
-	// 인증 객체 생성
 	public Authentication createAuthentication(String uid) {
-		UserDetails userDetails = userDetailsService.loadUserByUsername(uid);
-		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+		UserDetails userDetails = this.userDetailsService.loadUserByUsername(uid);
+		return UsernamePasswordAuthenticationToken.authenticated(userDetails, "", userDetails.getAuthorities());
 	}
 
-	// 토큰에서 uid 가져오는 기능
 	public String getUidFromToken(String token) {
-		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+		return Jwts.parserBuilder()
+			.setSigningKey(key)
+			.build()
+			.parseClaimsJws(token)
+			.getBody()
+			.get("uid", String.class);
 	}
 
-	// // 토큰의 유효성 검증
 	public boolean validateToken(String jwtToken) {
 		try {
 			Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwtToken);
+
+			// refresh token 접근시 false
+			if (claims.getHeader().get("type").equals("refresh")) {
+				return false;
+			}
+
 			return !claims.getBody().getExpiration().before(new Date());
 		} catch (Exception e) {
 			return false;

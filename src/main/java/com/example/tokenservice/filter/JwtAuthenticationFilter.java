@@ -42,8 +42,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-
-    // SecurityContext 에 Authentication 객체를 저장
     public void setAuthentication(String uid) {
         Authentication authentication = this.jwtTokenProvider.createAuthentication(uid);
         SecurityContextHolder.getContext().setAuthentication(authentication);

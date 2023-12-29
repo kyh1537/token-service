@@ -14,8 +14,11 @@ import com.example.tokenservice.constant.Errors;
 import com.example.tokenservice.exception.BindingException;
 import com.example.tokenservice.exception.CommonException;
 
+import lombok.extern.slf4j.Slf4j;
+
 @ControllerAdvice
 @RestController
+@Slf4j
 public class ExceptionAdvice implements ErrorController {
 
     @ExceptionHandler(Exception.class)
@@ -27,6 +30,7 @@ public class ExceptionAdvice implements ErrorController {
         response.setMessage(Errors.GENERAL_UNKNOWN.getMessage());
 
         req.setAttribute("error", e);
+        log.error("[************************ printStackTrace ************************]", e);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -39,6 +43,7 @@ public class ExceptionAdvice implements ErrorController {
         response.setMessage(Errors.GENERAL_UNKNOWN.getMessage());
 
         req.setAttribute("error", response);
+
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

@@ -23,15 +23,15 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "access_tokens")
-public class AccessTokens {
+@Table(name = "refresh_tokens")
+public class RefreshTokens {
 
 	@Id
 	@Column(columnDefinition = "bigint(20) NOT NULL COMMENT '고유 인덱스'")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "refresh_token", columnDefinition = "varchar(200) NOT NULL COMMENT '리프레시 토큰'")
+	@Column(name = "refresh_token", columnDefinition = "varchar(500) NOT NULL COMMENT '리프레시 토큰'")
 	private String refreshToken;
 
 	@Column(name = "uid", columnDefinition = "varchar(50) NOT NULL COMMENT '사용자 고유 아이디'")
@@ -42,8 +42,8 @@ public class AccessTokens {
 	private LocalDateTime createDate;
 
 	@Convert(converter = LocalDateTimeConverter.class)
-	@Column(name = "refresh_expire_date", columnDefinition = "datetime DEFAULT NULL COMMENT '리프레시 토큰 만료 시간'")
-	private LocalDateTime refreshExpireDate;
+	@Column(name = "expire_date", columnDefinition = "datetime DEFAULT NULL COMMENT '리프레시 토큰 만료 시간'")
+	private LocalDateTime expireDate;
 
 	@Column(name = "is_expire", columnDefinition = "bit(1) NOT NULL DEFAULT b'0' COMMENT '만료 여부'")
 	private Boolean isExpire;
@@ -51,12 +51,12 @@ public class AccessTokens {
 	@Column(name = "expire_cause", columnDefinition = "varchar(20) DEFAULT NULL COMMENT '만료 사유'")
 	private String expireCause;
 
-	public static AccessTokens of(String refreshToken, String uid) {
-		return AccessTokens.builder()
+	public static RefreshTokens of(String refreshToken, String uid) {
+		return RefreshTokens.builder()
 			.refreshToken(refreshToken)
 			.uid(uid)
 			.createDate(LocalDateTime.now())
-			.refreshExpireDate(LocalDateTime.now().plusDays(1))
+			.expireDate(LocalDateTime.now().plusDays(1))
 			.isExpire(false)
 			.build();
 	}

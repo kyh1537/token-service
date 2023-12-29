@@ -1,6 +1,5 @@
 package com.example.tokenservice.service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,10 +16,9 @@ import com.example.tokenservice.controller.dto.UserDto.LoginReq;
 import com.example.tokenservice.controller.dto.UserDto.LoginRes;
 import com.example.tokenservice.controller.dto.UserDto.UserCreateDto;
 import com.example.tokenservice.exception.CommonException;
-import com.example.tokenservice.model.AccessTokens;
+import com.example.tokenservice.model.RefreshTokens;
 import com.example.tokenservice.model.User;
-import com.example.tokenservice.model.User.Status;
-import com.example.tokenservice.persist.AccessTokensPersist;
+import com.example.tokenservice.persist.RefreshTokensPersist;
 import com.example.tokenservice.persist.UserPersist;
 import com.example.tokenservice.util.JwtTokenProvider;
 
@@ -31,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserPersist userPersist;
-	private final AccessTokensPersist tokenPersist;
+	private final RefreshTokensPersist tokenPersist;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 
@@ -46,19 +44,9 @@ public class UserService {
 
 		// 유저 정보 생성
 		String uid = UUID.randomUUID().toString().toUpperCase();
-		User user = User.builder()
-			.id(uid)
-			.email(req.getEmail())
-			.password(this.passwordEncoder.encode(req.getPassword()))
-			.name(req.getName())
-			.cellphone(req.getCellPhone())
-			.status(Status.ACTIVE)
-			.createUser(uid)
-			.updateUser(uid)
-			.build();
+		String pw = this.passwordEncoder.encode(req.getPassword());
+		this.userPersist.save(User.of(uid, req.getEmail(), pw, req.getName(), req.getCellPhone()));
 
-		// 유저 정보 저장
-		this.userPersist.save(user);
 		return CreateUserRes.builder().id(uid).build();
 	}
 
@@ -89,25 +77,28 @@ public class UserService {
 	//     this.userPersist.save(originalUser);
 	// }
 
+	/**
+	 * Login API 로직(멀티 로그인 지원 X)
+	 */
 	@Transactional
 	public LoginRes login(LoginReq req) {
 
 		// 아이디 검사
 		User user = this.userPersist.findByEmail(req.getEmail()).orElseThrow(
-			() -> new CommonException(Errors.USER_NOT_FOUND_ERR)
+			() -> CommonException.of(Errors.USER_NOT_FOUND_ERR)
 		);
 
 		// 비밀번호 검증
 		if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-			throw new CommonException(Errors.PASSWORD_NOT_MATCH_ERR);
+			throw CommonException.of(Errors.PASSWORD_NOT_MATCH_ERR);
 		}
 
 		// 기존 토큰 정보 모두 만료 처리
 		this.tokenPersist.expireToken(user.getId());
 
 		// Token 생성 및 DB 저장
-		TokenInfoDto tokenDto = this.jwtTokenProvider.createAllToken(user.getId());
-		AccessTokens newToken = AccessTokens.of(tokenDto.getRefreshToken(), user.getId());
+		TokenInfoDto tokenDto = this.jwtTokenProvider.createAllToken(user);
+		RefreshTokens newToken = RefreshTokens.of(tokenDto.getRefreshToken(), user.getId());
 		this.tokenPersist.save(newToken);
 
 		return LoginRes.builder().token(tokenDto).build();
@@ -118,13 +109,11 @@ public class UserService {
 	 */
 	public LoginRes refreshToken(UserDto.RefreshReq req) {
 
-		AccessTokens tokenInfo = this.tokenPersist.findByRefreshToken(req.getToken());
-		if (ObjectUtils.isEmpty(tokenInfo)) {
-			throw new CommonException(Errors.AUTH_TOKEN_EXPIRE_ERR);
-		}
+		RefreshTokens tokenInfo = this.tokenPersist.findByRefreshToken(req.getToken());
+		User user = this.userPersist.findById(tokenInfo.getUid());
 
 		return LoginRes.builder()
-			.token(this.jwtTokenProvider.createRefreshToken(tokenInfo.getUid(), req.getToken()))
+			.token(this.jwtTokenProvider.createRefreshToken(user, req.getToken()))
 			.build();
 	}
 
@@ -134,7 +123,7 @@ public class UserService {
 	private void validationMail(String email) {
 		Optional<User> checkUser = this.userPersist.findByEmail(email);
 		if (checkUser.isPresent()) {
-			throw new CommonException(Errors.VALIDATION_USER_EMAIL_ERR);
+			throw CommonException.of(Errors.VALIDATION_USER_EMAIL_ERR);
 		}
 	}
 
@@ -143,7 +132,7 @@ public class UserService {
 	 */
 	private void validationPw(String pw1, String pw2) {
 		if (ObjectUtils.isEmpty(pw1) || ObjectUtils.isEmpty(pw2) || !pw1.equals(pw2)) {
-			throw new CommonException(Errors.PASSWORD_NOT_MATCH_ERR);
+			throw CommonException.of(Errors.PASSWORD_NOT_MATCH_ERR);
 		}
 	}
 }

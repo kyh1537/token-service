@@ -11,7 +11,7 @@ public enum Errors {
     VALIDATION_USER_EMAIL_ERR(-1001, "에러", "이미 사용 중인 이메일 입니다."),
     USER_NOT_FOUND_ERR(-1002, "에러", "유저 정보를 찾을 수 없습니다."),
     PASSWORD_NOT_MATCH_ERR(-1003, "에러", "비밀번호가 일치하지 않습니다."),
-    AUTH_TOKEN_EXPIRE_ERR(-1005, "에러", "토큰이 만료 되었습니다."),
+    AUTH_TOKEN_EXPIRE_ERR(-1005, "에러", "사용 할 수 없는 토큰 입니다."),
     ;
 
 
