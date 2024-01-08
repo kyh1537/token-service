@@ -29,8 +29,8 @@ public class RefreshTokensPersist {
 		return tokenInfo;
 	}
 
-	public void expireToken(String uid) {
-		this.tokensRepository.expireToken(uid);
+	public void expireToken(String uid, String cause) {
+		this.tokensRepository.expireToken(uid, cause);
 	}
 
 	public void save(RefreshTokens refreshToken) {

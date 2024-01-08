@@ -94,14 +94,22 @@ public class UserService {
 		}
 
 		// 기존 토큰 정보 모두 만료 처리
-		this.tokenPersist.expireToken(user.getId());
+		this.tokenPersist.expireToken(user.getId(), "신규 로그인");
 
-		// Token 생성 및 DB 저장
+		// Token 생성 및 refreshToken DB 저장
 		TokenInfoDto tokenDto = this.jwtTokenProvider.createAllToken(user);
-		RefreshTokens newToken = RefreshTokens.of(tokenDto.getRefreshToken(), user.getId());
-		this.tokenPersist.save(newToken);
+		RefreshTokens refreshToken = RefreshTokens.of(tokenDto.getRefreshToken(), user.getId());
+		this.tokenPersist.save(refreshToken);
 
 		return LoginRes.builder().token(tokenDto).build();
+	}
+
+	/**
+	 * 로그아웃 API
+	 */
+	@Transactional
+	public void logout(User user) {
+		this.tokenPersist.expireToken(user.getId(), "로그아웃");
 	}
 
 	/**

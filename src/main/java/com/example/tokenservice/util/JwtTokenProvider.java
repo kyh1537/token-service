@@ -75,6 +75,7 @@ public class JwtTokenProvider {
 		claims.put("name", user.getName());
 
 		Date now = new Date();
+
 		return Jwts.builder()
 			.setHeaderParam("type", type)
 			.setClaims(claims)
