@@ -14,7 +14,7 @@ import com.example.tokenservice.controller.dto.UserDto;
 import com.example.tokenservice.controller.dto.UserDto.CreateUserRes;
 import com.example.tokenservice.controller.dto.UserDto.LoginReq;
 import com.example.tokenservice.controller.dto.UserDto.LoginRes;
-import com.example.tokenservice.controller.dto.UserDto.UserCreateDto;
+import com.example.tokenservice.controller.dto.UserDto.UserCreateReq;
 import com.example.tokenservice.exception.CommonException;
 import com.example.tokenservice.model.RefreshTokens;
 import com.example.tokenservice.model.User;
@@ -37,7 +37,7 @@ public class UserService {
 	 * 유저 회원 가입 API 로직
 	 */
 	@Transactional
-	public CreateUserRes createUser(UserCreateDto req) {
+	public CreateUserRes createUser(UserCreateReq req) {
 
 		this.validationPw(req.getPassword(), req.getCheckPassword());
 		this.validationMail(req.getEmail());

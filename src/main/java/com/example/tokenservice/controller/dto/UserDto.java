@@ -14,7 +14,7 @@ import lombok.Getter;
 public class UserDto {
 
     @Data
-    public static class UserCreateDto {
+    public static class UserCreateReq {
         @NotBlank(message = "이메일을 입력해 주세요.")
         @Email
         private String email;
@@ -26,6 +26,16 @@ public class UserDto {
         private String checkPassword;
 
         @NotBlank(message = "이름을 입력해 주세요.")
+        private String name;
+
+        @Pattern(regexp = "^01[0-9]{8,9}$", message = "전화번호 형식에 맞지 않습니다.")
+        private String cellPhone;
+    }
+
+    @Data
+    public static class UserUpdateReq {
+        private String password;
+        private String checkPassword;
         private String name;
 
         @Pattern(regexp = "^01[0-9]{8,9}$", message = "전화번호 형식에 맞지 않습니다.")

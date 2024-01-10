@@ -2,10 +2,11 @@ package com.example.tokenservice.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +31,7 @@ public class UserController {
 
     @PostMapping("/v1")
     public ResponseEntity<CreateUserRes> createUser(
-            @Valid @RequestBody UserDto.UserCreateDto req,
+            @Valid @RequestBody UserDto.UserCreateReq req,
             BindingResult result) {
 
         if (result.hasErrors()) {
@@ -38,6 +39,19 @@ public class UserController {
         }
 
         return ResponseEntity.ok(this.userService.createUser(req));
+    }
+
+    @PutMapping("/v1/{userId}")
+    public ResponseEntity<Void> UpdateUser(
+        @PathVariable String userId,
+        @Valid @RequestBody UserDto.UserUpdateReq req,
+        BindingResult result) {
+
+        if (result.hasErrors()) {
+            throw BindingException.of(result.getFieldError());
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/v1/login")
