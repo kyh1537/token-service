@@ -67,15 +67,17 @@ public class UserService {
 	//     this.userPersist.save(originalUser);
 	// }
 
-	// /**
-	//  * 사용자 탈퇴 API 로직
-	//  */
-	// @Transactional
-	// public void withdrawUser(String id) {
-	//     User originalUser = this.userPersist.findById(id, false);
-	//     originalUser.withdraw();
-	//     this.userPersist.save(originalUser);
-	// }
+	/**
+	 * 사용자 탈퇴 API 로직
+	 */
+	@Transactional
+	public void withdrawUser(User originalUser) {
+	    originalUser.withdraw();
+	    this.userPersist.save(originalUser);
+
+		// 로그아웃 처리
+		this.tokenPersist.expireToken(originalUser.getId(), "사용자 탈퇴");
+	}
 
 	/**
 	 * Login API 로직(멀티 로그인 지원 X)
@@ -87,6 +89,10 @@ public class UserService {
 		User user = this.userPersist.findByEmail(req.getEmail()).orElseThrow(
 			() -> CommonException.of(Errors.USER_NOT_FOUND_ERR)
 		);
+
+		if (User.Status.WITHDRAW.equals(user.getStatus())) {
+			throw CommonException.of(Errors.WITHDRAW_USER_ERR);
+		}
 
 		// 비밀번호 검증
 		if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {

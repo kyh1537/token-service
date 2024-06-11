@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -42,6 +44,7 @@ public class User extends CommonEntityByAuditing {
 	@Column(columnDefinition = "varchar(20) DEFAULT NULL COMMENT '전화번호'")
 	private String cellphone;
 
+	@Enumerated(EnumType.STRING)
 	@Column(columnDefinition = "varchar(20) DEFAULT 'ACTIVE' COMMENT '사용자 상태'")
 	private Status status;
 

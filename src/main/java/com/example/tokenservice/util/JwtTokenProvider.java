@@ -32,8 +32,7 @@ public class JwtTokenProvider {
 
 	// 토큰 유효 시간 30분
 	private final long ACCESS_TIME = 30 * 60 * 1000L;
-	private final long REFRESH_TIME = 0L;
-	// private final long REFRESH_TIME = 24 * 3600 * 1000L;
+	private final long REFRESH_TIME = 24 * 3600 * 1000L;
 
 	private final UserDetailsServiceImpl userDetailsService;
 
