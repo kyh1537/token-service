@@ -1,4 +1,4 @@
-package com.example.tokenservice.controller.exception;
+package com.example.tokenservice.exception;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.example.tokenservice.constant.Errors;
-import com.example.tokenservice.exception.BindingException;
-import com.example.tokenservice.exception.CommonException;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -10,7 +10,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import com.example.tokenservice.constant.Errors;
-import com.example.tokenservice.controller.exception.ErrorResponse;
+import com.example.tokenservice.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 

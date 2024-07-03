@@ -50,23 +50,6 @@ public class UserService {
 		return CreateUserRes.builder().id(uid).build();
 	}
 
-	// /**
-	//  * 유저 정보 수정 API 로직
-	//  */
-	// @Transactional
-	// public void updateUser(String id, UserCreateDto req) {
-	//     User originalUser = this.userPersist.findById(id, false);
-	//
-	//     // 메일이 다르면 체크
-	//     if (!req.getEmail().equals(originalUser.getEmail())) {
-	//         this.validationMail(req.getEmail());
-	//     }
-	//
-	//     // 유저 정보 수정
-	//     originalUser.updateUserInfo(req.getEmail(), req.getName(), req.getCellPhone());
-	//     this.userPersist.save(originalUser);
-	// }
-
 	/**
 	 * 사용자 탈퇴 API 로직
 	 */
@@ -95,7 +78,7 @@ public class UserService {
 		}
 
 		// 비밀번호 검증
-		if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+		if (!this.passwordEncoder.matches(req.getPassword(), user.getPassword())) {
 			throw CommonException.of(Errors.PASSWORD_NOT_MATCH_ERR);
 		}
 

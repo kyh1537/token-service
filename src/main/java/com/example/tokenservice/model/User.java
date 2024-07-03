@@ -52,12 +52,6 @@ public class User extends CommonEntityByAuditing {
 	@Column(name = "withdraw_date", columnDefinition = "datetime DEFAULT NULL COMMENT '탈퇴 일시'")
 	private LocalDateTime withdrawDate;
 
-	public void updateUserInfo(String email, String name, String cellphone) {
-		this.email = email;
-		this.name = name;
-		this.cellphone = cellphone;
-	}
-
 	public void withdraw() {
 		this.email = id;
 		this.name = null;

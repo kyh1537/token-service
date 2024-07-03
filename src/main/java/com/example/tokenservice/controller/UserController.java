@@ -43,19 +43,6 @@ public class UserController extends CommonController {
 		return ResponseEntity.ok().build();
 	}
 
-	// @PutMapping("/v1/{userId}")
-	// public ResponseEntity<Void> UpdateUser(
-	// 	@PathVariable String userId,
-	// 	@Valid @RequestBody UserDto.UserUpdateReq req,
-	// 	BindingResult result) {
-	//
-	// 	if (result.hasErrors()) {
-	// 		throw BindingException.of(result.getFieldError());
-	// 	}
-	//
-	// 	return ResponseEntity.ok().build();
-	// }
-
 	@PostMapping("/v1/login")
 	public ResponseEntity<LoginRes> login(@Valid @RequestBody UserDto.LoginReq req, BindingResult result) {
 

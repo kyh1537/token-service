@@ -14,6 +14,7 @@ import com.example.tokenservice.filter.CustomAccessDeniedHandler;
 import com.example.tokenservice.filter.CustomAuthenticationEntryPoint;
 import com.example.tokenservice.filter.JwtAuthenticationFilter;
 import com.example.tokenservice.util.JwtTokenProvider;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -21,35 +22,33 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
-    private final CustomAccessDeniedHandler accessDeniedHandler;
-    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final CustomAccessDeniedHandler accessDeniedHandler;
+	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()// 요청에 대한 사용권한 체크
-                .antMatchers("/user/v1").permitAll()
-                .antMatchers("/user/v1/login").permitAll()
-                .antMatchers("/user/v1/refresh").permitAll()
-                // .antMatchers("/admin/**").hasRole("ADMIN")
-                // .antMatchers("/video/**").hasRole("USER")
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler)
-                .authenticationEntryPoint(authenticationEntryPoint);
+		http.httpBasic().disable()
+			.csrf().disable()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.authorizeRequests()// 요청에 대한 사용권한 체크
+			.antMatchers("/user/v1").permitAll()
+			.antMatchers("/user/v1/login").permitAll()
+			.antMatchers("/user/v1/refresh").permitAll()
+			.anyRequest().authenticated()
+			.and()
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+			.exceptionHandling()
+			.accessDeniedHandler(accessDeniedHandler)
+			.authenticationEntryPoint(authenticationEntryPoint);
 
-        return http.build();
-    }
+		return http.build();
+	}
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }

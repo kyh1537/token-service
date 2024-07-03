@@ -1,4 +1,4 @@
-package com.example.tokenservice.controller.exception;
+package com.example.tokenservice.exception;
 
 
 import lombok.AllArgsConstructor;
