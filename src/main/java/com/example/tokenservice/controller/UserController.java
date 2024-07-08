@@ -53,7 +53,7 @@ public class UserController extends CommonController {
 		return ResponseEntity.ok(this.userService.login(req));
 	}
 
-	@PutMapping("/v1/logout")
+	@PostMapping("/v1/logout")
 	public ResponseEntity<Void> logout() {
 		User user = this.getUser();
 		this.userService.logout(user);
